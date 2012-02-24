@@ -5,8 +5,6 @@ import os, sys, time
 
 class TapeError(Exception): pass
 
-rows, columns = os.popen('stty size', 'r').read().split()
-
 class Tapes(object):
 	"""Display multiple tapes without having them blitz each other!
 	Also allow text buffer!"""
@@ -98,22 +96,31 @@ class Tape(object):
 		full_width = self.cell_width + 3 # plus padding
 		cells = columns / full_width
 		centre_cell = cells / 2 + 1
-		base = self.pos - (cells - centre_cell + 1)
+		
+		#position in array of first visible cell
+		base = self.pos - (cells - centre_cell + 1) 
 		
 		arrow_pos = (centre_cell * (full_width) + (full_width / 2))
 		print arrow_pos * " " + "|"
 		print arrow_pos * " " + "V"
-		for i in xrange(
+		for i in xrange(cells):
+			sys.stdout.write(" " * 2)
+			if i + base >= 0:
+				sys.stdout.write(str((i + base) % 10).center(self.cell_width))
+			else:
+				sys.stdout.write(" " * self.cell_width)
+			sys.stdout.write(" ")
+		sys.stdout.write("\n")
 		print "-" * columns
 		
 		for i in xrange(cells):
-			sys.stdout.write("| ")
 			if ((not self.left_infinite) and (i + base < 0)) or \
 			   ((not self.right_infinite) and (i + base >= len(self.contents))):
-				sys.stdout.write(" " * self.cell_width)
+				sys.stdout.write(" " * (self.cell_width + 2))
 			else:
 				while i + base >= len(self.contents):
 					self.contents.append(self.default)
+				sys.stdout.write("| ")
 				sys.stdout.write(str(self.contents[i + base]).center(self.cell_width))
 			sys.stdout.write(" ")
 			
