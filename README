@@ -1,0 +1,5 @@
+A text-based visual brainfuck interpreter. Give it a bf program and it'll show you the program tape and data tape whizzing away, along with displaying output.
+
+Use it like so:
+
+python vbf.py program.bf
